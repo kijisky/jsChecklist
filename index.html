@@ -1,0 +1,85 @@
+<html>
+
+<link rel="stylesheet" href="app.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script src="app.js"></script>
+
+<body ng-app="checklist">
+	<!-- <div ng-controller="checklistEditor"></div> -->
+	<div ng-controller="ChecklistConfirm as ctrl"> <!--  ng-include="'checklistConfirm.html'"> -->
+		
+		<input type="checkbox" ng-model="ctrl.editMode"></input>Редактирование<br>
+		<button ng-click="ctrl.SelectChecklists()">Checklist</button><br>
+		<button ng-click="ctrl.SaveData()" ng-show="ctrl.editMode">Сохранить</button>
+		<input type="text" ng-model="ctrl.data.name" ng-show="ctrl.editMode">
+		
+		
+		<div ng-show="ctrl.displayMode=='selectChecklist'" width="100%">
+			<hr>выбор карты<hr>
+			<button ng-click="ctrl.LoadTestData()" ng-show="ctrl.editMode">тестовые данные</button>
+			<div ng-repeat="chklst in ctrl.AvaliableChecklistNames"> 
+				<button class="btnSection" ng-click="ctrl.SelectChecklist(chklst)">{{chklst}}</button>
+				<button ng-click="ctrl.DeleteChecklist(chklst)" ng-show="ctrl.editMode">X</button> 
+			</div>
+			<br>
+			<input type="text" ng-model="ctrl.newChecklistName" ng-show="ctrl.editMode">
+			<button ng-click="ctrl.AddChecklist(ctrl.newChecklistName)" ng-show="ctrl.editMode">ADD</button> 
+		</div>
+		
+		<div ng-show="ctrl.displayMode=='select'" width="100%">
+			<hr>выбор секции<hr>			
+			<div ng-repeat="section in ctrl.data.sections"> 
+				<button class="btnSection" ng-click="ctrl.SectionStart(section)">{{section.name}}</button>
+				<button ng-click="ctrl.EditSection(section)" ng-show="ctrl.editMode">E</button> 
+				<button ng-click="ctrl.DeleteSection(section)" ng-show="ctrl.editMode">X</button> 
+			</div>
+				<input type="text" ng-model="ctrl.newSectionName" ng-show="ctrl.editMode">
+				<button ng-click="ctrl.AddSection(ctrl.newSectionName)" ng-show="ctrl.editMode">ADD</button> 
+			<br>
+		</div>
+		
+		
+		<div ng-show="ctrl.displayMode=='editSection'">
+			<div ng-repeat="item in ctrl.currentSection.items"> 
+				<input type="text" ng-model="item.name">
+				<button ng-click="ctrl.DeleteItem(item)">X</button> 
+			</div>
+			<button ng-click="ctrl.AddItem()">ADD</button> 
+			
+			<br><br><br>
+			<button ng-click="ctrl.EndEditSection()">OK</button> 
+			
+		</div>		
+		
+		<div ng-show="ctrl.displayMode=='checklist'">
+			<center>
+				<span class="sectionName"> {{ ctrl.currentSection.name }} </span>
+				<hr>
+				<span class="itemName"> {{ ctrl.currentItem.name }}</span>
+				<hr>
+				<button ng-disabled="ctrl.isBusy" class="btnCheck" ng-click="ctrl.check()">Check</button><br>
+				<button ng-disabled="ctrl.isBusy" class="btnSkip" ng-click="ctrl.skip()">Skip</button><br>
+				
+				<button ng-disabled="ctrl.isBusy" class="btnEtc" ng-click="ctrl.SectionRestart()">Перезаустить</button>
+				<button ng-disabled="ctrl.isBusy" class="btnEtc" ng-click="ctrl.SectionCancel()">Закончить</button>
+			</center>
+		</div>	
+		
+		<div ng-show="ctrl.displayMode=='done'">
+			<center>
+				<hr>Карта выполнена<hr>
+
+				<button ng-disabled="ctrl.isBusy" class="btnNextSection" ng-click="ctrl.SectionStart(ctrl.nextSection)">
+					Следующая: {{ ctrl.nextSection.name }}
+				</button><br>
+				<button ng-disabled="ctrl.isBusy" class="btnSection" ng-click="ctrl.ModeSelect()">
+					Выбор секции
+				</button><br>
+			</center>
+		</div>			
+	</div>
+</body>
+
+</html>
